@@ -68,16 +68,7 @@ function deviceValueChanged(dev)
         }
         console.log("setting state " + val);
 
-        // garage.setDoorState(myqId(device.id), "" + val, function(err, state) {
-        //     if (err) {
-        //         console.log(err);
-        //         throw err;
-        //     }
-        //     device.value = parseInt(state.state);
-        //     device.text = statusText[dev.value];
-        //     checkValue(device, 1000);
-        // });
-        dryRun(myqId(device.id), "" + val, function(err, state) {
+        garage.setDoorState(myqId(device.id), "" + val, function(err, state) {
             if (err) {
                 console.log(err);
                 throw err;
@@ -86,6 +77,15 @@ function deviceValueChanged(dev)
             device.text = statusText[dev.value];
             checkValue(device, 1000);
         });
+        // dryRun(myqId(device.id), "" + val, function(err, state) {
+        //     if (err) {
+        //         console.log(err);
+        //         throw err;
+        //     }
+        //     device.value = parseInt(state.state);
+        //     device.text = statusText[dev.value];
+        //     checkValue(device, 1000);
+        // });
     }
 }
 
