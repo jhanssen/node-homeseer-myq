@@ -17,31 +17,67 @@ function myqId(id)
     return "";
 }
 
-function checkValue(dev)
+function checkValue(dev, timeout)
 {
-    if (dev.value > 2) {
-        // keep checking while the door is opening or closing
-        setTimeout(function() {
-            garage.getDoorState(myqId(dev.id), function(err, state) {
-                if (err)
-                    throw err;
-                dev.value = parseInt(state.state);
-                dev.text = statusText[dev.value];
+    // keep checking while the door is opening or closing
+    if (timeout === undefined)
+        timeout = 10000;
+    setTimeout(function() {
+        garage.getDoorState(myqId(dev.id), function(err, state) {
+            if (err)
+                throw err;
+            dev.value = parseInt(state.state);
+            dev.text = statusText[dev.value];
+            if (dev.value > 2)
                 checkValue(dev);
-            });
-        }, 10000);
-    }
+        });
+    }, timeout);
+}
+
+function checkStatus(dev)
+{
+    setTimeout(function() {
+        garage.getDoorState(myqId(dev.id), function(err, state) {
+            if (err)
+                throw err;
+            console.log("updated " + state);
+            dev.value = parseInt(state.state);
+            dev.text = statusText[dev.value];
+            checkStatus(dev);
+        });
+    }, 5 * 60 * 1000);
+}
+
+function dryRun(id, value, cb)
+{
+    console.log("dry run with " + id);
+    setTimeout(function() {
+        cb(null, { id: id, state: value });
+    }, 100);
 }
 
 function deviceValueChanged(dev)
 {
     var device = dev.device;
     if (dev.value !== undefined) {
-        garage.setDoorState(myqId(device.id), "" + dev.value, function(err, state) {
-            if (err)
+        console.log("setting state " + dev.value);
+        // garage.setDoorState(myqId(device.id), "" + dev.value, function(err, state) {
+        //     if (err) {
+        //         console.log(err);
+        //         throw err;
+        //     }
+        //     device.value = parseInt(state.state);
+        //     device.text = statusText[dev.value];
+        //     checkValue(device, 1000);
+        // });
+        dryRun(myqId(device.id), "" + dev.value, function(err, state) {
+            if (err) {
+                console.log(err);
                 throw err;
-            dev.value = parseInt(state.state);
-            checkValue(dev);
+            }
+            device.value = parseInt(state.state);
+            device.text = statusText[dev.value];
+            checkValue(device, 1000);
         });
     }
 }
@@ -139,6 +175,7 @@ function createDevices(devices) {
                     throw err;
                 d.value = parseInt(state.state);
                 d.text = statusText[d.value];
+                checkStatus(d);
             });
             d.on("valueChanged", deviceValueChanged);
             devs.push(d);
