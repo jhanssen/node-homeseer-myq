@@ -26,6 +26,7 @@ function checkValue(dev, timeout)
         garage.getDoorState(myqId(dev.id), function(err, state) {
             if (err)
                 throw err;
+            console.log("checked", state);
             dev.value = parseInt(state.state);
             dev.text = statusText[dev.value];
             if (dev.value > 2)
@@ -60,8 +61,14 @@ function deviceValueChanged(dev)
 {
     var device = dev.device;
     if (dev.value !== undefined) {
-        console.log("setting state " + dev.value);
-        // garage.setDoorState(myqId(device.id), "" + dev.value, function(err, state) {
+        var val = dev.value;
+        if (val === 2) {
+            // close is apparently 0?
+            val = 0;
+        }
+        console.log("setting state " + val);
+
+        // garage.setDoorState(myqId(device.id), "" + val, function(err, state) {
         //     if (err) {
         //         console.log(err);
         //         throw err;
@@ -70,7 +77,7 @@ function deviceValueChanged(dev)
         //     device.text = statusText[dev.value];
         //     checkValue(device, 1000);
         // });
-        dryRun(myqId(device.id), "" + dev.value, function(err, state) {
+        dryRun(myqId(device.id), "" + val, function(err, state) {
             if (err) {
                 console.log(err);
                 throw err;
