@@ -1,0 +1,6 @@
+[submodule "submodules/node-homeseer"]
+	path = submodules/node-homeseer
+	url = https://github.com/jhanssen/node-homeseer.git
+[submodule "submodules/node-liftmaster"]
+	path = submodules/node-liftmaster
+	url = https://github.com/chadsmith/node-liftmaster.git

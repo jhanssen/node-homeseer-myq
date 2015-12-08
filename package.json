@@ -1,0 +1,13 @@
+{
+  "name": "node-homeseer-myq",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./src/myq.js"
+  },
+  "dependencies": {
+    "ws": "*",
+    "jfs": "*",
+    "request": "2.x"
+  }
+}
